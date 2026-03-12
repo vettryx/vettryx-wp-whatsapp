@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: VETTRYX WP WhatsApp Widget
- * Plugin URI:  https://github.com/vettryx/vettryx-wp-whatsapp
+ * Plugin URI:  https://github.com/vettryx/vettryx-wp-core
  * Description: Botão flutuante nativo e ultraleve do WhatsApp, focado em conversão e performance.
- * Version:     1.0.0
+ * Version:     1.1.0
  * Author:      VETTRYX Tech
  * Author URI:  https://vettryx.com.br
  * License:     GPLv3
@@ -63,6 +63,7 @@ class Vettryx_WhatsApp_Widget {
             'message'  => sanitize_textarea_field( trim( $input['message'] ?? '' ) ),
             'position' => in_array( $input['position'] ?? 'right', ['right', 'left'] ) ? $input['position'] : 'right',
             'hide_on'  => in_array( $input['hide_on'] ?? 'none', ['none', 'mobile', 'desktop'] ) ? $input['hide_on'] : 'none',
+            'bg_color' => sanitize_hex_color( $input['bg_color'] ?? '#25d366' ) ?: '#25d366',
         ];
     }
 
@@ -89,6 +90,7 @@ class Vettryx_WhatsApp_Widget {
         // Configurações visuais
         $position = $data['position'] ?? 'right';
         $hide_on = $data['hide_on'] ?? 'none';
+        $bg_color = !empty($data['bg_color']) ? esc_attr($data['bg_color']) : '#25d366';
         
         $position_css = ($position === 'left') ? 'left: 20px;' : 'right: 20px;';
 
@@ -109,35 +111,31 @@ class Vettryx_WhatsApp_Widget {
                 <?php echo $position_css; ?>
                 width: 60px;
                 height: 60px;
-                background-color: #25d366;
-                color: #FFF;
+                background-color: <?php echo $bg_color; ?>;
                 border-radius: 50px;
-                text-align: center;
-                font-size: 30px;
                 box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
                 z-index: 99999;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 text-decoration: none;
-                transition: transform 0.3s ease, background-color 0.3s ease;
+                transition: transform 0.3s ease, filter 0.3s ease;
             }
             .vettryx-wa-widget:hover {
-                background-color: #128c7e;
                 transform: scale(1.05);
-                color: #FFF;
+                filter: brightness(0.9); /* Escurece a cor atual em 10% no hover */
             }
             .vettryx-wa-widget svg {
                 width: 35px;
                 height: 35px;
-                fill: currentColor;
+                fill: #FFFFFF !important; /* Força a cor branca no ícone */
             }
             <?php echo $display_css; ?>
         </style>
 
         <a href="<?php echo esc_url($whatsapp_url); ?>" class="vettryx-wa-widget" target="_blank" rel="noopener noreferrer" aria-label="Fale conosco no WhatsApp">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zM223.9 414.8c-32 0-63.3-8.6-90.8-24.8l-6.5-3.8-67.4 17.7 18-65.7-4.2-6.7C55 301.9 44.5 264.4 44.5 223.9c0-98.8 80.4-179.3 179.4-179.3 47.9 0 92.9 18.7 126.8 52.6 33.9 33.9 52.6 78.9 52.6 126.8 0 98.9-80.4 179.3-179.4 179.3h-.1zm98.1-134.4c-5.4-2.7-31.9-15.8-36.9-17.6-5-1.8-8.6-2.7-12.2 2.7-3.6 5.4-14 17.6-17.2 21.2-3.2 3.6-6.4 4.1-11.8 1.4-5.4-2.7-22.8-8.4-43.4-26.8-16-14.3-26.8-31.9-30-37.3-3.2-5.4-.3-8.3 2.4-11 2.4-2.4 5.4-6.3 8.1-9.5 2.7-3.2 3.6-5.4 5.4-9 1.8-3.6.9-6.8-.5-9.5-1.4-2.7-12.2-29.4-16.7-40.3-4.4-10.7-8.9-9.3-12.2-9.5-3.2-.2-6.8-.2-10.4-.2-3.6 0-9.5 1.4-14.5 6.8-5 5.4-19 18.5-19 45.1s19.5 52.2 22.2 55.8c2.7 3.6 38.1 58.2 92.3 81.5 12.9 5.5 22.9 8.9 30.7 11.4 13 4.1 24.8 3.5 34.2 2.1 10.6-1.6 31.9-13 36.4-25.6 4.5-12.6 4.5-23.4 3.2-25.6-1.3-2.3-5-3.6-10.4-6.3z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
         </a>
         <?php
@@ -145,7 +143,7 @@ class Vettryx_WhatsApp_Widget {
 
     // Renderiza a página de configurações no painel administrativo
     public function render_admin_page() {
-        $data = get_option( $this->option_name, [ 'phone' => '', 'message' => '', 'position' => 'right', 'hide_on' => 'none' ] );
+        $data = get_option( $this->option_name, [ 'phone' => '', 'message' => '', 'position' => 'right', 'hide_on' => 'none', 'bg_color' => '#25d366' ] );
         ?>
         <div class="wrap">
             <h1><?php _e( 'VETTRYX Tech - WhatsApp Widget', 'vettryx-wp-core' ); ?></h1>
@@ -187,6 +185,13 @@ class Vettryx_WhatsApp_Widget {
                                 <option value="desktop" <?php selected( $data['hide_on'], 'desktop' ); ?>>Ocultar em Computadores (Desktop)</option>
                             </select>
                             <p class="description">Útil se você já tiver outro botão focado em mobile ou desktop.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="bg_color">Cor de Fundo do Botão</label></th>
+                        <td>
+                            <input type="color" name="<?php echo esc_attr( $this->option_name ); ?>[bg_color]" id="bg_color" value="<?php echo esc_attr( $data['bg_color'] ); ?>" style="padding: 0; border: none; width: 50px; height: 32px; cursor: pointer; border-radius: 4px;">
+                            <p class="description">Padrão do WhatsApp: <strong>#25d366</strong>. Altere para combinar com a identidade da agência, se desejar.</p>
                         </td>
                     </tr>
                 </table>
