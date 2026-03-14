@@ -3,10 +3,11 @@
  * Plugin Name: VETTRYX WP WhatsApp Widget
  * Plugin URI:  https://github.com/vettryx/vettryx-wp-core
  * Description: Botão flutuante nativo e ultraleve do WhatsApp, focado em conversão e performance.
- * Version:     1.1.0
+ * Version:     1.1.1
  * Author:      VETTRYX Tech
  * Author URI:  https://vettryx.com.br
- * License:     GPLv3
+ * License:     Proprietária (Uso Comercial Exclusivo)
+ * Vettryx Icon: dashicons-format-chat
  */
 
 // Segurança: Impede o acesso direto ao arquivo
